@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -16,12 +18,12 @@ import java.util.List;
 public class FilmController {
     private int idCounter = 1;
     private final static LocalDate RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    private final List<Film> films = new ArrayList<>();
+    private final Map<Integer, Film> films = new HashMap<>();
 
     @GetMapping
     public List<Film> findAll() {
         log.info("получение всех фильмов");
-        return films;
+        return new ArrayList<>(films.values());
     }
 
     @PostMapping
@@ -32,15 +34,24 @@ public class FilmController {
         }
         film.setId(idCounter);
         idCounter++;
-        films.add(film);
+        addFilm(film);
         return film;
     }
 
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
+    public Film put(@Valid @RequestBody Film film) throws ValidationException {
         log.info("обновление фильма");
-        films.remove(film);
-        films.add(film);
+        if (film.getId() == 0) {
+            throw new ValidationException("film без id");
+        }
+        if (!films.containsKey(film.getId())) {
+            throw new ValidationException("film не найден");
+        }
+        addFilm(film);
         return film;
+    }
+
+    private void addFilm(Film film) {
+        films.put(film.getId(), film);
     }
 }
