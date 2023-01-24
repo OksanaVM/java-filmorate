@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.controller.ValidationException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final LocalDate MINDATA = LocalDate.of(1895, 12, 28);
 
-    private int genId() {
+    private int generatorId() {
         return ++id;
     }
 
@@ -37,7 +36,7 @@ public class FilmController {
     public Film addFilm(@Valid @RequestBody Film film) throws Exception {
         log.info("Запрос POST /films " + film);
         if (validate(film) && !films.containsKey(film.getId())) {
-            film.setId(genId());
+            film.setId(generatorId());
             films.put(film.getId(), film);
         }
         return film;

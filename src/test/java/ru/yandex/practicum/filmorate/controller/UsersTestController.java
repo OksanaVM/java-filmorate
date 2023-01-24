@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserControllerTest {
+class UsersTestController {
     static User testUser;
     static UserController userController;
 
@@ -22,7 +22,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void validationBadUser(){
+    public void validationUser(){
         Throwable exception = assertThrows(ValidationException.class,() -> {
             userController.validate(
                     new User("email mail", "login", "2000-12-12"));

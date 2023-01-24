@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.controller.ValidationException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -20,23 +19,23 @@ public class UserController {
     private int id = 0;
     private final Map<Integer, User> users = new HashMap<>();
 
-    private int genId() {
+    private int generatorId() {
         return ++id;
     }
 
 
     @GetMapping
     public List<User> findAll() {
-        log.debug("Текущее количество юзеров: {}", users.size());
+        log.debug("Получен запрос на список пользоваталей");
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
     @ResponseBody
-    public User addUser(@Valid @RequestBody User user) throws Exception {
+    public User create(@Valid @RequestBody User user) throws Exception {
         log.info("Запрос POST /users " + user);
         if (validate(user)) {
-            user.setId(genId());
+            user.setId(generatorId());
             users.put(user.getId(), user);
         }
         return user;
@@ -44,7 +43,7 @@ public class UserController {
 
     @PutMapping
     @ResponseBody
-    public User updateUser(@Valid @RequestBody User user) throws Exception {
+    public User update(@Valid @RequestBody User user) throws Exception {
         log.info("Запрос PUT /users " + user);
         validate(user);
         if (users.containsKey(user.getId())) {
@@ -57,15 +56,15 @@ public class UserController {
 
     boolean validate(User user) throws ValidationException {
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            throw new ValidationException("поле email пусто или не содержит @");
+            throw new ValidationException("Электронная почта пользователя пустая или не содержит @");
         }
         if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("поле login пусто или содержит пробелы");
+            throw new ValidationException("Логин пустой или содержит пробелы");
         }
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate birthday = LocalDate.parse(user.getBirthday(), inputFormatter);
         if (birthday.isAfter(LocalDate.now())) {
-            throw new ValidationException("введенная дата дня рождения еще не наступила");
+            throw new ValidationException("Дата рождения пользователя превышает текущую дату");
         }
         if (user.getName() == null) {
             user.setName(user.getLogin());
