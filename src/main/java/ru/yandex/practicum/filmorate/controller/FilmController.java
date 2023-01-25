@@ -34,11 +34,10 @@ public class FilmController {
     @PostMapping
     @ResponseBody
     public Film addFilm(@Valid @RequestBody Film film) throws Exception {
-        log.info("Запрос POST /films " + film);//validate(film);
-        if (validate(film) && !films.containsKey(film.getId())) {
-            film.setId(generatorId());
-            films.put(film.getId(), film);
-        }
+        log.info("Запрос POST /films " + film);
+        validate(film);//validate(film);
+        film.setId(generatorId());
+        films.put(film.getId(), film);
         return film;
     }
 

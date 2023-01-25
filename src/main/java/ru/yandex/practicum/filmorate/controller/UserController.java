@@ -34,10 +34,9 @@ public class UserController {
     @ResponseBody
     public User create(@Valid @RequestBody User user) throws Exception {
         log.info("Запрос POST /users " + user);
-        if (validate(user)) {
-            user.setId(generatorId());
-            users.put(user.getId(), user);
-        }
+        validate(user);
+        user.setId(generatorId());
+        users.put(user.getId(), user);
         return user;
     }
 
