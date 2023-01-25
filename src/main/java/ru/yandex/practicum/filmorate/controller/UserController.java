@@ -54,13 +54,7 @@ public class UserController {
         return user;
     }
 
-    boolean validate(User user) throws ValidationException {
-        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта пользователя пустая или не содержит @");
-        }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин пустой или содержит пробелы");
-        }
+   boolean validate(User user) throws ValidationException {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate birthday = LocalDate.parse(user.getBirthday(), inputFormatter);
         if (birthday.isAfter(LocalDate.now())) {

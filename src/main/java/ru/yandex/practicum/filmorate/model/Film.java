@@ -4,17 +4,20 @@ import lombok.Data;
 import lombok.NonNull;
 
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Data
 public class Film {
+    @PositiveOrZero
     private int id;
     @NonNull
-    @NotBlank
+    @NotBlank(message = "Не правильное название фильма")
     private final String name;
-    @Size(max = 200)
+    @NotNull(message = "Отсутствует описание фильма")
+    @Size(max = 200, message = "слишком длинное описание, больше 200 символов")
     private final String description;
     private final String releaseDate;
+    @Positive
+    @Min(value = 1, message = "Неправильная продолжительность фильма")
     private final int duration;
 }

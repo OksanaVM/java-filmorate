@@ -34,7 +34,7 @@ public class FilmController {
     @PostMapping
     @ResponseBody
     public Film addFilm(@Valid @RequestBody Film film) throws Exception {
-        log.info("Запрос POST /films " + film);
+        log.info("Запрос POST /films " + film);//validate(film);
         if (validate(film) && !films.containsKey(film.getId())) {
             film.setId(generatorId());
             films.put(film.getId(), film);
@@ -56,18 +56,6 @@ public class FilmController {
     }
 
     boolean validate(Film film) throws Exception {
-        if (film.getName().isEmpty()) {
-            log.debug("Не введено название фильма!");
-            throw new ValidationException("Не введено название фильма!");
-        }
-        if (film.getDescription().length() > 200) {
-            log.debug("Превышено максимальное кол-во символов в описании!");
-            throw new ValidationException("Превышено максимальное кол-во символов в описании!");
-        }
-        if (film.getDuration() <= 0) {
-            log.debug("Продолжительность фильма меньше либо равна нулю");
-            throw new ValidationException("Продолжительность фильма меньше либо равна нулю");
-        }
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate releaseDate = LocalDate.parse(film.getReleaseDate(), inputFormatter);
         if (releaseDate.isBefore(MINDATA)) {
