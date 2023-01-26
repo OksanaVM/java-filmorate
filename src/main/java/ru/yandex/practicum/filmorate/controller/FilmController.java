@@ -54,13 +54,13 @@ public class FilmController {
         return film;
     }
 
-    boolean validate(Film film) throws Exception {
+    void validate(Film film) throws Exception {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate releaseDate = LocalDate.parse(film.getReleaseDate(), inputFormatter);
         if (releaseDate.isBefore(MINDATA)) {
             log.debug("Введена неверная дата релиза (раньше 1895-12-28)");
             throw new ValidationException("Введена неверная дата релиза (раньше 1895-12-28)");
         }
-        return true;
+        return;
     }
 }

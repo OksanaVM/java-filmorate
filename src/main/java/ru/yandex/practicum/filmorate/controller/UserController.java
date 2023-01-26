@@ -53,7 +53,7 @@ public class UserController {
         return user;
     }
 
-   boolean validate(User user) throws ValidationException {
+   void validate(User user) throws ValidationException {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate birthday = LocalDate.parse(user.getBirthday(), inputFormatter);
         if (birthday.isAfter(LocalDate.now())) {
@@ -62,6 +62,6 @@ public class UserController {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
-        return true;
+        return;
     }
 }
