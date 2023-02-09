@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import ru.yandex.practicum.filmorate.model.validator.BeginOfCinema;
+
 import java.time.LocalDate;
 import javax.validation.constraints.*;
 import java.util.HashSet;

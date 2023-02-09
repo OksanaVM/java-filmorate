@@ -35,11 +35,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         log.info("Запрос PUT /films/{}", film);
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-        } else {
-            throw new ObjectNotFoundException("Фильм с id=" + id + " не найден");
-        }
+        films.containsKey(film.getId());
+        films.put(film.getId(), film);
         return film;
     }
 
@@ -56,38 +53,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film deleteById(int id) {
         log.info("Запрос Del /films/{} ", id);
-        if (films.containsKey(id)) {
-            Film film = films.get(id);
-            films.remove(id);
-            return film;
-        } else {
-            throw new ObjectNotFoundException("Фильм с id=" + id + " не найден");
-        }
+        films.containsKey(id);
+        Film film = films.get(id);
+        films.remove(id);
+        return film;
+
     }
 
-    @Override
-    public Film addLike(int filmId, int userId) {
-        log.info("Запрос PUT /films/{}/like/{} ", filmId, userId);
-        if (!films.containsKey(filmId)) {
-            throw new ObjectNotFoundException("Фильм с id=" + id + " не найден");
-        } else {
-            films.get(filmId).getLikes().add(userId);
-            return films.get(filmId);
-        }
-    }
-
-    @Override
-    public Film removeLike(int filmId, int userId) {
-        log.info("Запрос Del /films/{}/like/{}", filmId, userId);
-        if (!films.containsKey(filmId)) {
-            throw new ObjectNotFoundException("Фильм с id " + id + " не найден");
-        } else if (!films.get(filmId).getLikes().contains(userId)) {
-            throw new ObjectNotFoundException("лайк от юзера с id=" + id + " не найден для этого фильма");
-        } else {
-            films.get(filmId).getLikes().remove(userId);
-            return films.get(filmId);
-        }
-    }
 
     @Override
     public List<Film> getBestFilms(int count) {
@@ -95,4 +67,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values().stream().sorted((a, b) -> b.getLikes().size() - a.getLikes().size()).
                 limit(count).collect(Collectors.toList());
     }
+
+
 }

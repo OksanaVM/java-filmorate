@@ -20,21 +20,23 @@ public class UserController {
     }
 
     @PostMapping
-      public User addUser(@Valid @RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         return userService.create(user);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user)  {
-        return userService.update(user);
+    public User update(@Valid @RequestBody User user) {
+        userService.update(user);
+        return user;
     }
+
     @PutMapping("/{id}/friends/{friendId}")
-    public List<Integer> addFriends(@PathVariable int id, @PathVariable int friendId) {
+    public Boolean addFriends(@PathVariable int id, @PathVariable int friendId) {
         return userService.addFriendship(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public List<Integer> deleteFriends(@PathVariable int id, @PathVariable int friendId) {
+    public Boolean deleteFriends(@PathVariable int id, @PathVariable int friendId) {
         return userService.removeFriendship(id, friendId);
     }
 
@@ -52,6 +54,7 @@ public class UserController {
     public User getUserById(@PathVariable int id) {
         return userService.getById(id);
     }
+
     @DeleteMapping("/{id}")
     public User deleteById(@PathVariable int id) {
         return userService.deleteById(id);
