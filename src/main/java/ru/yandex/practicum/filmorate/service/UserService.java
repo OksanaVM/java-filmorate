@@ -3,10 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.exeption.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.exeption.*;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,15 +25,19 @@ public class UserService {
     }
 
     public void update(User user) {
-        if (!userStorage.getAllUsers().containsKey(user.getId())) {
+        validate(user);
+        if (getById(user.getId()) == null) {
             throw new ObjectNotFoundException("Для обновления пользователя необходимо передать его корректный id");
         }
         userStorage.update(user);
-
     }
 
     public User getById(int id) {
-        return userStorage.getById(id);
+        User user = userStorage.getById(id);
+        if (user == null) {
+            throw new ObjectNotFoundException("User с id=" + id + " не найден");
+        }
+        return user;
     }
 
     public User deleteById(int id) {
@@ -42,36 +45,38 @@ public class UserService {
     }
 
     private boolean validate(User user) {
-        if (user.getName() == null || user.getName().isBlank())
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("В логине пробел");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-        return false;
+        }
+        return true;
     }
 
-
     public Boolean addFriendship(Integer id, Integer friendId) {
-        if (!userStorage.getAllUsers().containsKey(id)) {
+        if (getById(id) == null) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", id));
         }
         User user = userStorage.getById(id);
-        if (!userStorage.getAllUsers().containsKey(friendId)) {
+        if (getById(friendId) == null) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", friendId));
         }
         User newFriend = userStorage.getById(friendId);
         if (id.equals(friendId)) {
-            throw new ObjectNotFoundException("Пользователь не может добавть в друзья сам себя");
+            throw new ValidationException("Пользователь не может добавть в друзья сам себя");
         }
         user.getFriends().add(friendId);
         newFriend.getFriends().add(id);
         return true;
     }
 
-
     public Boolean removeFriendship(Integer id, Integer friendId) throws ObjectNotFoundException {
-        if (!userStorage.getAllUsers().containsKey(id)) {
+        if (getById(id) == null) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", id));
         }
         User user = userStorage.getById(id);
-        if (!userStorage.getAllUsers().containsKey(friendId)) {
+        if (getById(friendId) == null) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", friendId));
         }
         User removedFriend = userStorage.getById(friendId);
@@ -84,15 +89,12 @@ public class UserService {
     }
 
     public List<User> getFriendsListById(int id) {
-        //log.info("Запрос GET /users/{}/friends", id);
         return userStorage.getAllUsers().get(id).getFriends().stream()
                 .map(u -> userStorage.getAllUsers().get(u))
                 .collect(Collectors.toList());
     }
 
-
     public List<User> getCommonFriendsList(int firstId, int secondId) {
-        //log.info("Запрос GET /users/{}/friends/common/{}", firstId, secondId);
         if (!userStorage.getAllUsers().containsKey(firstId)) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", firstId));
         }

@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.exeption.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     public List<Film> findAll() {
         return filmStorage.findAll();
@@ -30,21 +33,26 @@ public class FilmService {
     }
 
     public Film getFilmById(int id) {
-        return filmStorage.getById(id);
+        Film film = filmStorage.getById(id);
+        if (film == null) {
+            throw new ObjectNotFoundException("Фильм с id=" + id + " не найден");
+        }
+        return film;
     }
 
     public Film deleteById(int id) {
         return filmStorage.deleteById(id);
     }
 
-    public void addLike(int filmId, int userId) {
-        Film film = getFilmById(filmId);
-        if (film != null && userId > 0) {
-            film.getLikes().add(userId);
-            filmStorage.update(film);
-        } else {
-            throw new ObjectNotFoundException("Пользователя с таким id не существует");
+    public Film addLike(int filmId, int userId) {
+        if (userStorage.getById(userId) == null) {
+            throw new ObjectNotFoundException("Пользователь с ID: " + userId + " не найден");
         }
+        Film film = filmStorage.getById(filmId);
+        User user = userStorage.getById(userId);
+        film.getLikes().add(user.getId());
+
+        return film;
     }
 
     public void removeLike(int filmId, int userId) {

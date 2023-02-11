@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.exeption.ObjectNotFoundException;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.Map;
 public class InMemoryUserStorage implements UserStorage {
     private int id = 0;
     private final Map<Integer, User> users = new HashMap<>();
+
     private int genId() {
         return ++id;
     }
@@ -49,7 +50,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             return users.get(id);
         } else {
-            throw new ObjectNotFoundException("User с id=" + id + " не найден");
+            return null;
         }
     }
 
