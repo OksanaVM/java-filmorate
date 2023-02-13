@@ -62,9 +62,4 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(id);
         return user;
     }
-
-    @Override
-    public Map<Integer, User> getAllUsers() {
-        return users;
-    }
 }
