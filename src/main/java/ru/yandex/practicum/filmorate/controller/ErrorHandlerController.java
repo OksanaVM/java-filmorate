@@ -38,7 +38,7 @@ public class ErrorHandlerController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handlerThrowable(final MethodArgumentNotValidException e) {
         log.warn("error 400 {}", e.getMessage());
         return Map.of("400 Throwable error", e.getMessage());

@@ -48,10 +48,13 @@ public class FilmService {
         if (userStorage.getById(userId) == null) {
             throw new ObjectNotFoundException("Пользователь с ID: " + userId + " не найден");
         }
-        Film film = filmStorage.getById(filmId);
         User user = userStorage.getById(userId);
-        film.getLikes().add(user.getId());
+        if (filmStorage.getById(filmId)==null){
+            throw new ObjectNotFoundException("Пользователь с ID: " + filmId + " не найден");
+        }
+        Film film = filmStorage.getById(filmId);
 
+        film.getLikes().add(user.getId());
         return film;
     }
 

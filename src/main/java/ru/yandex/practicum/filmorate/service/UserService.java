@@ -44,14 +44,13 @@ public class UserService {
         return userStorage.deleteById(id);
     }
 
-    private boolean validate(User user) {
+    private void validate(User user) {
         if (user.getLogin().contains(" ")) {
             throw new ValidationException("В логине пробел");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        return true;
     }
 
     public Boolean addFriendship(Integer id, Integer friendId) {
@@ -89,23 +88,22 @@ public class UserService {
     }
 
     public List<User> getFriendsListById(int id) {
-        return userStorage.getAllUsers().get(id).getFriends().stream()
-                .map(u -> userStorage.getAllUsers().get(u))
-                .collect(Collectors.toList());
+        User user = userStorage.getById(id);
+        return user.getFriends().stream().map(userStorage::getById).collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriendsList(int firstId, int secondId) {
-        if (!userStorage.getAllUsers().containsKey(firstId)) {
-            throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", firstId));
+    public List<User> getCommonFriendsList(int userId, int friendId) {
+        if (userStorage.getById(userId)==null) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", userId));
         }
-        User user = userStorage.getById(firstId);
-        if (!userStorage.getAllUsers().containsKey(secondId)) {
-            throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", secondId));
+        User user = userStorage.getById(userId);
+        if (userStorage.getById(friendId)==null) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %d не добавлен в систему", friendId));
         }
-        User otherUser = userStorage.getById(secondId);
+        User otherUser = userStorage.getById(friendId);
         return user.getFriends().stream()
                 .filter(u -> otherUser.getFriends().contains(u))
-                .map(u -> userStorage.getAllUsers().get(u))
+                .map(userStorage::getById)
                 .collect(Collectors.toList());
     }
 }
