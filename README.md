@@ -1,6 +1,6 @@
 # Приложение Filmorate
 ## ER-диаграмма
-![](diagram.png)
+![ER-filmorate](https://user-images.githubusercontent.com/112753342/221631971-57688a54-b495-4d42-9f5a-870e763a91ec.png)
 ## Примеры SQL-запросов
 ###### Получение всех пользователей:
 ```
