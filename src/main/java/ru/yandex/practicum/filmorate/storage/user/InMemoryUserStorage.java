@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -35,12 +32,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         log.info("Запрос PUT /users/{}", user);
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
         }
-        return user;
+        return Optional.of(user);
     }
 
 
@@ -62,4 +59,6 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(id);
         return user;
     }
+
+
 }
