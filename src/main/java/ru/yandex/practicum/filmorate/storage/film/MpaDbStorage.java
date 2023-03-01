@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -22,28 +23,28 @@ public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Mpa findById(int id) {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("SELECT * FROM MPA WHERE mpa_id= ?", id);
-
-        if (rowSet.next()) {
-            return new Mpa(
-                     rowSet.getInt("mpa_id"),
-                    rowSet.getString("mpa_name"));
-        } else {
-            String message = "Рейтинг с идентификатором " + id + " не найден.";
-            log.info(message);
-            throw new ObjectNotFoundException(message);
-        }
+    public List<Mpa> getAll() {
+        final String sqlQuery = "SELECT mpa_id, mpa_name FROM mpa";
+        log.info("Запрос всех mpa выполнен");
+        return jdbcTemplate.query(sqlQuery, this::makeMpa);
     }
 
     @Override
-    public Collection<Mpa> findALl() {
-        String sql = "SELECT * FROM MPA";
-        return jdbcTemplate.query(sql, (rs, rn) -> makeRating(rs));
+    public Mpa getById(int id) {
+        final String sqlQuery = "SELECT mpa_id, mpa_name FROM mpa WHERE mpa_id = ?";
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
+
+        if (!mpaRows.next()) {
+            log.info("Mpa с id = {} не найден.", id);
+            throw new ObjectNotFoundException("Mpa не найден");
+        }
+        return jdbcTemplate.queryForObject(sqlQuery, this::makeMpa, id);
     }
 
-    private Mpa makeRating(ResultSet rs) throws SQLException {
-        return new Mpa((Integer) rs.getInt("mpa_id"), rs.getString("mpa_name"));
+    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
+        int mpaId = rs.getInt("mpa_id");
+        String mpaName = rs.getString("mpa_name");
+        return new Mpa(mpaId, mpaName);
     }
 }
 

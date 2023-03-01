@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
+@Getter
+@Setter
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Mpa {
     private final int id;
     private String name;
