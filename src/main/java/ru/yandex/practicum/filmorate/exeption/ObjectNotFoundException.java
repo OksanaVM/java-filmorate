@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model.exeption;
+package ru.yandex.practicum.filmorate.exeption;
 
 public class ObjectNotFoundException extends RuntimeException {
     public ObjectNotFoundException(String message) {

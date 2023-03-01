@@ -8,7 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.exeption.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

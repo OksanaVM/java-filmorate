@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.validator.BeginOfCinema;
 import java.time.LocalDate;
 import javax.validation.constraints.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -23,4 +24,16 @@ public class Film {
     @Min(value = 1, message = "Неправильная продолжительность фильма")
     private final int duration;
     private Set<Integer> likes = new HashSet<>();
+    private List<Genre> genres;
+    private Mpa mpa;
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, List<Genre> genres, Mpa mpa) {
+        this.id = id;
+        this.description= description;
+        this.releaseDate= releaseDate;
+        this.name = name;
+        this.duration = duration;
+        this.genres = genres;
+        this.mpa= mpa;
+    }
 }

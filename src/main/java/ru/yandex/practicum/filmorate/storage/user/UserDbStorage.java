@@ -24,12 +24,6 @@ public class UserDbStorage implements UserStorage {
 
 
     private final JdbcTemplate jdbcTemplate;
-    private Integer idMax = 0;
-
-    public Integer getIdMax() {
-        idMax = idMax + 1;
-        return idMax;
-    }
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
