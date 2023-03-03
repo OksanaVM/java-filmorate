@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.storage.DbStorageMixin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,31 +19,38 @@ import java.util.Collection;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class GenreDbStorage implements GenreStorage {
+public class GenreDbStorage implements GenreStorage, DbStorageMixin {
     private final JdbcTemplate jdbcTemplate;
+
+    @Override
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
 
     @Override
     public Collection<Genre> findAll() {
         String sql = "SELECT * FROM GENRE";
-        return jdbcTemplate.query(sql, (rs, rn) -> makeGenre(rs));
+        return jdbcTemplate.query(sql, this::makeGenre);
     }
 
     @Override
     public Genre findById(int id) {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("SELECT * FROM GENRE WHERE GENRE_ID = ?", id);
+        String sqlQuery = "SELECT * FROM genre WHERE genre_id = ?";
+        return queryForObjectOrNull(sqlQuery, this::makeGenre, id);
 
-        if (rowSet.next()) {
-            return new Genre(
-                    rowSet.getInt("genre_id"),
-                    rowSet.getString("genre_name"));
-        } else {
-            String message = "Жанр с идентификатором " + id + " не найден.";
-            log.info(message);
-            throw new ObjectNotFoundException(message);
-        }
+//        if (rowSet.next()) {
+//            return new Genre(
+//                    rowSet.getInt("genre_id"),
+//                    rowSet.getString("genre_name"));
+//        } else {
+//            String message = "Жанр с идентификатором " + id + " не найден.";
+//            log.info(message);
+//            throw new ObjectNotFoundException(message);
+//        }
     }
 
-    private Genre makeGenre(ResultSet rs) throws SQLException {
-        return new Genre(rs.getInt("id"), rs.getString("name"));
+    private Genre makeGenre(ResultSet rs, int rn) throws SQLException {
+        return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
     }
+
 }

@@ -12,5 +12,3 @@ public class Mpa {
     private final int id;
     private String name;
 }
-
-

@@ -1,33 +1,36 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.DbStorageMixin;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Component
-@Primary
-public class UserDbStorage implements UserStorage {
-
-
+public class UserDbStorage implements UserStorage, DbStorageMixin {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class UserDbStorage implements UserStorage {
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, generatedId);
-        user.setId(Objects.requireNonNull(generatedId.getKey().intValue()));
+        user.setId(Objects.requireNonNull(generatedId.getKey()).intValue());
         log.info("запрос создания user с id {} отправлен", user.getId());
         return user;
     }
@@ -68,7 +71,7 @@ public class UserDbStorage implements UserStorage {
     public User getById(int id) {
         final String sqlQuery = "SELECT * FROM users WHERE id = ?";
         log.info("запрос на получение user с id = {} отправлен.", id);
-        return jdbcTemplate.queryForObject(sqlQuery, this::makeUser, id);
+        return queryForObjectOrNull(sqlQuery, this::makeUser, id);
     }
 
     @Override
@@ -81,23 +84,38 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
-
-    public List<Integer> addFriendship(int firstId, int secondId) {
-        final String sqlUpdateQuery = "UPDATE friends SET status = ? WHERE user_id = ? AND friend_id = ?";
-        final String sqlWriteQuery = "INSERT INTO friends (user_id, friend_id, status ) VALUES (?, ?, ?)";
-        final String checkQuery = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(checkQuery, firstId, secondId);
-        if (userRows.next()) {
-            jdbcTemplate.update(sqlUpdateQuery, true, firstId, secondId);
-            log.info("user с id = {} подтвердил дружбу с user id = {}", firstId, secondId);
-        } else {
-            jdbcTemplate.update(sqlWriteQuery, firstId, secondId, false);
-            log.info("user с id = {} подписался на user id = {}", firstId, secondId);
-        }
-        return List.of(firstId, secondId);
+    @Override
+    public boolean addFriend(int id, int friendId) {
+        final String sqlQuery = "INSERT INTO friends (user_id, friend_id, status) VALUES (?, ?, ?)";
+        return update(sqlQuery, id, friendId, false) > 0;
     }
 
+    @Override
+    public boolean ackFriend(int id, int friendId) {
+        final String sqlQuery = "UPDATE friends SET status = ? WHERE user_id = ? AND friend_id = ?";
+        return update(sqlQuery, true, id, friendId) > 0;
+    }
 
+    @Override
+    public boolean deleteFriend(int id, int friendId) {
+        final String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+        return update(sqlQuery, id, friendId) > 0;
+    }
+
+    @Override
+    public List<User> findFriends(int id) {
+        final String q = "SELECT u.* FROM friends f INNER JOIN users u ON f.friend_id = u.id WHERE f.user_id = ?";
+        return jdbcTemplate.query(q, this::makeUser, id);
+    }
+
+    @Override
+    public List<User> findCommonFriends(int id1, int id2) {
+        final String q = "SELECT u.* FROM (" +
+                "SELECT friend_id FROM friends WHERE user_id = ? INTERSECT " +
+                "SELECT friend_id FROM friends WHERE user_id = ?" +
+                ") f INNER JOIN users u ON f.friend_id = u.id";
+        return jdbcTemplate.query(q, this::makeUser, id1, id2);
+    }
 
     private User makeUser(ResultSet resultSet, int rowNum) throws SQLException {
         int id = resultSet.getInt("id");
@@ -107,6 +125,4 @@ public class UserDbStorage implements UserStorage {
         LocalDate birthday = resultSet.getDate("birthday").toLocalDate();
         return new User(id, email, login, name, birthday);
     }
-
-
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandlerController {
@@ -33,8 +35,8 @@ public class ErrorHandlerController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handlerThrowable(final Throwable e) {
-        log.warn("error 500 {}", e.getMessage());
-        return Map.of("500 Throwable error", e.getMessage());
+        log.warn("error 500", e);
+        return Map.of("500 Throwable error", emptyIfNull(e.getMessage()));
     }
 
     @ExceptionHandler
@@ -43,4 +45,4 @@ public class ErrorHandlerController {
         log.warn("error 400 {}", e.getMessage());
         return Map.of("400 Throwable error", e.getMessage());
     }
-  }
+}
