@@ -46,7 +46,6 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     public Film create(Film film) {
         final String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         final String sqlGenreQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
-        // final String sqlMpaQuery = "INSERT INTO mpa ( MPA_NAME) VALUES ( ?)";
 
         Mpa mpa = film.getMpa();
 

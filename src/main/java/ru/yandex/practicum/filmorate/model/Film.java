@@ -31,8 +31,6 @@ public class Film {
     private Set<Integer> likes;
     private Mpa mpa;
 
-
-
     public Film(int id, String name, String description, LocalDate releaseDate, int duration, List<Genre> genres, Mpa mpa) {
         this.id = id;
         this.description= description;

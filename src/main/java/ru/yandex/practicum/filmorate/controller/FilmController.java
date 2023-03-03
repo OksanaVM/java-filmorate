@@ -21,7 +21,6 @@ public class FilmController {
 
     private final FilmService filmService;
 
-
     @GetMapping
     public List<Film> findAll() {
         return filmService.findAll();
@@ -36,6 +35,7 @@ public class FilmController {
     public Film updateFilm(@Valid @RequestBody Film film) {
         return filmService.update(film);
     }
+
     @DeleteMapping
     public Film deleteFilm(@PathVariable int id) {
         return filmService.deleteById(id);

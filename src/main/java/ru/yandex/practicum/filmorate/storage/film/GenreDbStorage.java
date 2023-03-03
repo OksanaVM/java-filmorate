@@ -37,20 +37,9 @@ public class GenreDbStorage implements GenreStorage, DbStorageMixin {
     public Genre findById(int id) {
         String sqlQuery = "SELECT * FROM genre WHERE genre_id = ?";
         return queryForObjectOrNull(sqlQuery, this::makeGenre, id);
-
-//        if (rowSet.next()) {
-//            return new Genre(
-//                    rowSet.getInt("genre_id"),
-//                    rowSet.getString("genre_name"));
-//        } else {
-//            String message = "Жанр с идентификатором " + id + " не найден.";
-//            log.info(message);
-//            throw new ObjectNotFoundException(message);
-//        }
     }
 
     private Genre makeGenre(ResultSet rs, int rn) throws SQLException {
         return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
     }
-
 }

@@ -50,17 +50,6 @@ public class FilmService {
 
     public void addLike(int filmId, int userId) {
         filmStorage.addLike(filmId, userId);
-//        if (userStorage.getById(userId) == null) {
-//            throw new ObjectNotFoundException("Пользователь с ID: " + userId + " не найден");
-//        }
-//        User user = userStorage.getById(userId);
-//        if (filmStorage.getById(filmId)==null){
-//            throw new ObjectNotFoundException("Пользователь с ID: " + filmId + " не найден");
-//        }
-//        Film film = filmStorage.getById(filmId);
-//
-//        film.getLikes().add(user.getId());
-//        return film;
     }
 
     public void removeLike(int filmId, int userId) {
@@ -69,16 +58,6 @@ public class FilmService {
             throw new ObjectNotFoundException("User с id=" + userId + " не найден");
         }
         filmStorage.removeLike(filmId, userId);
-//        Film film = getFilmById(filmId);
-//        if (film != null) {
-//            if (film.getLikes().contains(userId)) {
-//                film.getLikes().remove(userId);
-//                filmStorage.update(film);
-//            } else {
-//                throw new ObjectNotFoundException("Like на фильм " + filmId + " от пользователя "
-//                        + userId + " не найден");
-//            }
-//        }
     }
 
     public List<Film> getBestFilms(int count) {
