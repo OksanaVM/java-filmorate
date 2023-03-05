@@ -11,4 +11,7 @@ import javax.validation.constraints.NotBlank;
 public class Mpa {
     private final int id;
     private String name;
+
+    public void setId(int mpa_id) {
+    }
 }

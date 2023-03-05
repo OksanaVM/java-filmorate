@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.storage.DbStorageMixin;
 
 import java.sql.Date;
@@ -18,8 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
 
@@ -29,6 +30,8 @@ import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
 @Primary
 public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    GenreService genreService;
 
     @Override
     public JdbcTemplate getJdbcTemplate() {
@@ -36,10 +39,23 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     }
 
     @Override
-    public List<Film> findAll() {
-        final String sqlQuery = "SELECT * FROM films";
-        log.info("запрос чтения всех фильмов отправлен");
-        return jdbcTemplate.query(sqlQuery, this::makeFilm);
+    public List <Film> findAll() {
+        final String sqlQuery = "select films.*, " +
+                "mpa.mpa_name mpa_name " +
+                "from films join mpa on films.mpa_id = mpa.mpa_id";
+        List<Film> films = new ArrayList<>(jdbcTemplate.query(sqlQuery, this::makeFilm));
+        Map<Integer, List<Genre>> filmGenres = genreService.getFilmGenres();
+        for (Film film : films) {
+            film.setGenres(filmGenres.getOrDefault(film.getId(), new ArrayList<>()));
+        }
+        return films;
+    }
+
+    @Override
+    public Film getById(int id) {
+        final String sqlQuery = "SELECT * FROM films WHERE id = ?";
+        log.info("Запрос фильма с id = {} отправлен", id);
+        return queryForObjectOrNull(sqlQuery, this::makeFilm, id);
     }
 
     @Override
@@ -106,13 +122,6 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
         film.setGenres(findGenre(film.getId()));
         log.info("Фильм {} с id = {} обновлен", film.getName(), film.getId());
         return film;
-    }
-
-    @Override
-    public Film getById(int id) {
-        final String sqlQuery = "SELECT * FROM films WHERE id = ?";
-        log.info("Запрос фильма с id = {} отправлен", id);
-        return queryForObjectOrNull(sqlQuery, this::makeFilm, id);
     }
 
     @Override

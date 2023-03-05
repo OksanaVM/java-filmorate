@@ -6,6 +6,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.GenreStorage;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class GenreService {
@@ -25,5 +27,9 @@ public class GenreService {
 
     public Collection<Genre> getAll() {
         return genreStorage.findAll();
+    }
+
+    public Map<Integer, List<Genre>> getFilmGenres() {
+        return genreStorage.getFilmGenres();
     }
 }

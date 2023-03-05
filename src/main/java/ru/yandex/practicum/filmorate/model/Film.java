@@ -40,4 +40,14 @@ public class Film {
         this.genres = genres;
         this.mpa= mpa;
     }
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+        this.id = id;
+        this.description= description;
+        this.releaseDate= releaseDate;
+        this.name = name;
+        this.duration = duration;
+
+        this.mpa= mpa;
+    }
 }
