@@ -39,7 +39,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     public List<Film> findAll() {
         final String sqlQuery = "SELECT * FROM films";
         log.info("запрос чтения всех фильмов отправлен");
-        return jdbcTemplate.query(sqlQuery, this::makefilm);
+        return jdbcTemplate.query(sqlQuery, this::makeFilm);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     public Film getById(int id) {
         final String sqlQuery = "SELECT * FROM films WHERE id = ?";
         log.info("Запрос фильма с id = {} отправлен", id);
-        return queryForObjectOrNull(sqlQuery, this::makefilm, id);
+        return queryForObjectOrNull(sqlQuery, this::makeFilm, id);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
                         "ORDER BY COUNT(fl.user_id) DESC " +
                         "LIMIT ?";
         log.info("Запрос {} популярных фильмов выполнен", count);
-        return jdbcTemplate.query(sqlQuery, this::makefilm, count);
+        return jdbcTemplate.query(sqlQuery, this::makeFilm, count);
     }
 
     private Mpa findMpa(int id) {
@@ -176,7 +176,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
         return new Genre(id, name);
     }
 
-    private Film makefilm(ResultSet resultSet, int rowNum) throws SQLException {
+    private Film makeFilm(ResultSet resultSet, int rowNum) throws SQLException {
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
         String description = resultSet.getString("description");
