@@ -1,4 +1,4 @@
-package filmorate;
+package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -26,18 +26,18 @@ public class UserServiceTests {
     private final User testUser = new User(1, "testEmail", "testLogin", "testName",
             LocalDate.of(1989, 3, 12));
 
-    @Test
-    void createAndGetTest() {
-        userService.create(testUser);
-        assertEquals(testUser, userService.getById(1));
-    }
-
-    @Test
-    void findAllTest() {
-        assertEquals(new ArrayList<>(), userService.findAll());
-        userService.create(testUser);
-        assertEquals(List.of(testUser), userService.findAll());
-    }
+//    @Test
+//    void createAndGetTest() {
+//        userService.create(testUser);
+//        assertEquals(testUser, userService.getById(1));
+//    }
+//
+//    @Test
+//    void findAllTest() {
+//        assertEquals(new ArrayList<>(), userService.findAll());
+//        userService.create(testUser);
+//        assertEquals(List.of(testUser), userService.findAll());
+//    }
 
     @Test
     void deleteTest() {

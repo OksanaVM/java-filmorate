@@ -1,4 +1,4 @@
-package filmorate;
+package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;

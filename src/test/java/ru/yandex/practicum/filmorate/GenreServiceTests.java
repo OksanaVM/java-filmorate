@@ -1,4 +1,4 @@
-package filmorate;
+package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -12,11 +12,9 @@ import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -36,9 +34,6 @@ public class GenreServiceTests {
                 genreService.getAll());
     }
 
-    private void assertEquals(List<Genre> asList, Collection<Genre> all) {
-    }
-
     @Test
     public void testGetGenreById() {
         List<Genre> list = Arrays.asList(new Genre(1, "Комедия"),
@@ -48,7 +43,7 @@ public class GenreServiceTests {
                 new Genre(5, "Документальный"),
                 new Genre(6, "Боевик"));
         for (Genre genre : list) {
-            assertEquals((List<Genre>) genre, Collections.singleton(genreService.getGenreById(genre.getId())));
+            assertEquals(genre, genreService.getGenreById(genre.getId()));
         }
     }
 
