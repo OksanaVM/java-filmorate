@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,20 +28,17 @@ class FilmServiceTests {
     private final UserService userService;
     private final Film film = new Film(1, "name", "description1",
             LocalDate.of(2023, 1, 19), 100, null, new Mpa(1, "G"));
-
     private final User user = new User(1, "testEmail", "testLogin", "testName",
             LocalDate.of(1989, 3, 12));
 
     @Test
     public void addAndGetFilmTest() {
         filmService.create(film);
-       // assertEquals(film, filmService.getFilmById(1));
     }
 
     @Test
     public void findAllFilmsTest() {
         filmService.create(film);
-      //  assertEquals(List.of(film), filmService.findAll());
     }
 
     @Test

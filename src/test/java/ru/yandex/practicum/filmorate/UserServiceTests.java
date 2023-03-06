@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,15 +31,12 @@ public class UserServiceTests {
         userService.create(testUser);
     }
 
-
     @Test
     void updateTest() {
         userService.create(testUser);
         testUser.setName("updateName");
         userService.update(testUser);
     }
-
-
 
     @Test
     void removeFriendsTest() {
