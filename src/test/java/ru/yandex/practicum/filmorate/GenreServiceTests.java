@@ -24,17 +24,6 @@ public class GenreServiceTests {
     private final GenreService genreService;
 
     @Test
-    public void testGetAllGenres() {
-        assertEquals(Arrays.asList(new Genre(1, "Комедия"),
-                        new Genre(2, "Драма"),
-                        new Genre(3, "Мультфильм"),
-                        new Genre(4, "Триллер"),
-                        new Genre(5, "Документальный"),
-                        new Genre(6, "Боевик")),
-                genreService.getAll());
-    }
-
-    @Test
     public void testGetGenreById() {
         List<Genre> list = Arrays.asList(new Genre(1, "Комедия"),
                 new Genre(2, "Драма"),

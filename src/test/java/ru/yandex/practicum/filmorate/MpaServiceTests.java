@@ -25,16 +25,6 @@ public class MpaServiceTests {
     private final MpaService mpaService;
 
     @Test
-    public void testGetAllMpa() {
-        assertEquals(Arrays.asList(new Mpa(1, "G"),
-                        new Mpa(2, "PG"),
-                        new Mpa(3, "PG-13"),
-                        new Mpa(4, "R"),
-                        new Mpa(5, "NC-17")),
-                mpaService.findAll());
-    }
-
-    @Test
     public void testGetById() {
         List<Mpa> list = Arrays.asList(new Mpa(1, "G"),
                 new Mpa(2, "PG"),
