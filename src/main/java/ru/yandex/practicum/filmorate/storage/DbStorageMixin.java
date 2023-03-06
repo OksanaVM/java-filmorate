@@ -12,8 +12,7 @@ public interface DbStorageMixin {
     JdbcTemplate getJdbcTemplate();
 
     default <T> T queryForObjectOrNull(String sql, RowMapper<T> rowMapper, Object... args)
-            throws DataAccessException
-    {
+            throws DataAccessException {
         try {
             return getJdbcTemplate().queryForObject(sql, rowMapper, args);
         } catch (EmptyResultDataAccessException ex) {
@@ -32,6 +31,7 @@ public interface DbStorageMixin {
     default void updateIgnoreDuplicate(String sql, Object... args) throws DataAccessException {
         try {
             getJdbcTemplate().update(sql, args);
-        } catch (DuplicateKeyException ignore) {}
+        } catch (DuplicateKeyException ignore) {
+        }
     }
 }

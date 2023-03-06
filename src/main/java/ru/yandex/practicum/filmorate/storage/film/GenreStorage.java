@@ -9,6 +9,5 @@ import java.util.Map;
 public interface GenreStorage {
     Collection<Genre> findAll();
     Genre findById(int id);
-
     Map<Integer, List<Genre>> getFilmGenres();
 }

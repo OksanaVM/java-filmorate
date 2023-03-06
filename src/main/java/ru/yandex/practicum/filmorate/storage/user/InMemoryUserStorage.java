@@ -60,7 +60,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public boolean addFriend(int id, int friendId) {
         User u = users.get(id);
-        if (u == null  ||  users.get(friendId) == null) {
+        if (u == null || users.get(friendId) == null) {
             throw new ObjectNotFoundException("Object not found");
         }
         Set<Integer> friends = emptyIfNull(u.getFriends());
@@ -102,7 +102,7 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> findCommonFriends(int id1, int id2) {
         User u1 = users.get(id1);
         User u2 = users.get(id2);
-        if (u1 == null  ||  u2 == null) {
+        if (u1 == null || u2 == null) {
             return emptyList();
         }
         Set<Integer> friends2 = emptyIfNull(u2.getFriends());

@@ -20,7 +20,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
 
@@ -39,7 +42,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     }
 
     @Override
-    public List <Film> findAll() {
+    public List<Film> findAll() {
         final String sqlQuery = "select films.*, " +
                 "mpa.mpa_name mpa_name " +
                 "from films join mpa on films.mpa_id = mpa.mpa_id";
@@ -60,7 +63,8 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
 
     @Override
     public Film create(Film film) {
-        final String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
+        final String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) " +
+                "VALUES (?, ?, ?, ?, ?)";
         final String sqlGenreQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
 
         Mpa mpa = film.getMpa();
@@ -100,8 +104,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
         if (jdbcTemplate.update(sqlQuery,
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(),
-                film.getId()) == 0)
-        {
+                film.getId()) == 0) {
             return null; // not found
         }
 

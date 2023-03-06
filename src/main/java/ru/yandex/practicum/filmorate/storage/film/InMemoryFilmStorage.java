@@ -14,7 +14,6 @@ import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
 public class InMemoryFilmStorage implements FilmStorage {
     private int id = 0;
     private final Map<Integer, Film> films = new HashMap<>();
-
     private int genId() {
         return ++id;
     }
