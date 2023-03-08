@@ -32,4 +32,8 @@ public class GenreService {
     public Map<Integer, List<Genre>> getFilmGenres() {
         return genreStorage.getFilmGenres();
     }
+
+    public Map<Integer, List<Genre>> getFilmGenresForPopular(Integer count) {
+        return genreStorage.getFilmGenresForPopular(count);
+    }
 }

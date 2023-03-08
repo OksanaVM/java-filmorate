@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Sql({"/schema.sql", "/data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GenreServiceTests {
     private final GenreService genreService;
 
@@ -38,8 +40,9 @@ public class GenreServiceTests {
 
     @Test
     public void testGenreNotFound() {
-        Genre genre = new Genre(777,"Порно");
+        Genre genre = new Genre(777,"Мелодрамма");
         Assertions.assertThatThrownBy(() ->
                 genreService.getGenreById(genre.getId())).isInstanceOf(ObjectNotFoundException.class);
+
     }
 }

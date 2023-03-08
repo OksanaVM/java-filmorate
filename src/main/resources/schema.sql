@@ -28,18 +28,20 @@ CREATE TABLE IF NOT EXISTS PUBLIC.users  (
 CREATE TABLE IF NOT EXISTS PUBLIC.film_genre (
     film_id     integer references films(id) on update cascade on delete cascade,
     genre_id    integer references genre(genre_id) on update cascade on delete cascade,
-        PRIMARY KEY (FILM_ID, GENRE_ID)
+    PRIMARY KEY (FILM_ID, GENRE_ID)
     );
 
 CREATE TABLE IF NOT EXISTS PUBLIC.films_likes (
     film_id     integer references films(id) on update cascade on delete cascade,
-    user_id     integer references users(id) on update cascade on delete cascade
+    user_id     integer references users(id) on update cascade on delete cascade,
+    PRIMARY KEY (film_id, user_id)
     );
 
 CREATE TABLE IF NOT EXISTS PUBLIC.friends (
     user_id   integer references users (id),
     friend_id integer references users (id),
-    status    boolean
+    status    boolean,
+    PRIMARY KEY (user_id, friend_id )
     );
 
 

@@ -56,6 +56,11 @@ public class GenreDbStorage implements GenreStorage, DbStorageMixin {
         return filmGenres;
     }
 
+    @Override
+    public Map<Integer, List<Genre>> getFilmGenresForPopular(Integer count) {
+        return null;
+    }
+
     private RowMapper<FilmGenre> getRowMapperFilmGenres() {
         return (rs, rowNum) -> {
             Genre genre = new Genre();

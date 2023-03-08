@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.exeption.ObjectNotFoundException;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Sql({"/schema.sql", "/data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MpaServiceTests {
     private final MpaService mpaService;
 
@@ -38,6 +40,7 @@ public class MpaServiceTests {
     @Test
     public void testMpaNotFound() {
         Assertions.assertThatThrownBy(() ->
-                mpaService.getById(777)).isInstanceOf(ObjectNotFoundException.class);
+            mpaService.getById(777)).isInstanceOf(ObjectNotFoundException.class);
+
     }
 }

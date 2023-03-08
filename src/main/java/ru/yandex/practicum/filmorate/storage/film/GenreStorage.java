@@ -10,4 +10,5 @@ public interface GenreStorage {
     Collection<Genre> findAll();
     Genre findById(int id);
     Map<Integer, List<Genre>> getFilmGenres();
+    Map<Integer, List<Genre>> getFilmGenresForPopular(Integer count);
 }

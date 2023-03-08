@@ -20,10 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.Util.emptyIfNull;
 
@@ -40,14 +37,20 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
+    static Map<Integer, List<Genre>> filmGenres;
+
+    void updateMap() {
+           filmGenres = genreService.getFilmGenres();
+    }
 
     @Override
     public List<Film> findAll() {
         final String sqlQuery = "select films.*, " +
                 "mpa.mpa_name mpa_name " +
                 "from films join mpa on films.mpa_id = mpa.mpa_id";
+
         List<Film> films = new ArrayList<>(jdbcTemplate.query(sqlQuery, this::makeFilm));
-        Map<Integer, List<Genre>> filmGenres = genreService.getFilmGenres();
+
         for (Film film : films) {
             film.setGenres(filmGenres.getOrDefault(film.getId(), new ArrayList<>()));
         }
@@ -56,7 +59,9 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
 
     @Override
     public Film getById(int id) {
-        final String sqlQuery = "SELECT * FROM films WHERE id = ?";
+        final String sqlQuery = "Select films.*, " +
+                "mpa.mpa_name mpa_name " +
+                "from films join mpa on films.mpa_id = mpa.mpa_id WHERE films.id = ?";
         log.info("Запрос фильма с id = {} отправлен", id);
         return queryForObjectOrNull(sqlQuery, this::makeFilm, id);
     }
@@ -93,6 +98,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
         film.setGenres(findGenre(film.getId()));
 
         log.info("добавлен фильм {}", film.getName());
+        updateMap();
         return film;
     }
 
@@ -124,6 +130,7 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
 
         film.setGenres(findGenre(film.getId()));
         log.info("Фильм {} с id = {} обновлен", film.getName(), film.getId());
+        updateMap();
         return film;
     }
 
@@ -157,7 +164,8 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
     @Override
     public List<Film> getBestFilms(int count) {
         final String sqlQuery =
-                "SELECT f.* FROM films f " +
+                "SELECT f.*, mpa.mpa_name mpa_name FROM films f " +
+                        "join mpa on f.mpa_id = mpa.mpa_id "+
                         "LEFT JOIN films_likes fl ON f.id = fl.film_id " +
                         "GROUP BY f.id " +
                         "ORDER BY COUNT(fl.user_id) DESC " +
@@ -194,12 +202,10 @@ public class FilmDbStorage implements FilmStorage, DbStorageMixin {
         String description = resultSet.getString("description");
         LocalDate releaseDate = resultSet.getDate("release_date").toLocalDate();
         int duration = resultSet.getInt("duration");
-
-        List<Genre> genres = findGenre(id);
-
+        List<Genre> genres = filmGenres.getOrDefault(id, new ArrayList<Genre>());
         int mpaId = resultSet.getInt("mpa_id");
-        Mpa mpa = resultSet.wasNull() ? null : findMpa(mpaId);
-
-        return new Film(id, name, description, releaseDate, duration, genres, mpa);
+        String mpaName = resultSet.getString("mpa_name");
+        Mpa mpa = new Mpa(mpaId,mpaName);
+        return new Film(id, name, description, releaseDate, duration, genres,  mpa);
     }
 }
