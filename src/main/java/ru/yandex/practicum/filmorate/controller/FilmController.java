@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -19,7 +18,6 @@ public class FilmController {
 
     private final FilmService filmService;
 
-
     @GetMapping
     public List<Film> findAll() {
         return filmService.findAll();
@@ -33,7 +31,11 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         return filmService.update(film);
+    }
 
+    @DeleteMapping
+    public Film deleteFilm(@PathVariable int id) {
+        return filmService.deleteById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
